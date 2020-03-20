@@ -11,13 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-Route::resource('/file', 'DocumentController');
-Route::get('/dashboard', 'DashboardController@dashboard');
+Route::get('/', 'HomeController@index')->name('home');
+Route::resource('/files', 'DocumentController');
+Route::get('dashboard', 'DashboardController@dashboard');
+Route::post('/profile', 'DashboardController@update');
 Route::get('/profile', 'DashboardController@profile');
+Route::get('download/{id}', 'DocumentController@filedownload');
+

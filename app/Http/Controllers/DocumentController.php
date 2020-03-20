@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Document;
+use Illuminate\Support\Facades\Auth;
 
 class DocumentController extends Controller
 {
@@ -15,10 +17,11 @@ class DocumentController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     public function index()
     {
-        //
+        $files = Document::all();
+        return view('admin.files')->with('files', $files);
     }
 
     /**
@@ -29,6 +32,7 @@ class DocumentController extends Controller
     public function create()
     {
         //
+        return view('user.send');
     }
 
     /**
@@ -40,6 +44,32 @@ class DocumentController extends Controller
     public function store(Request $request)
     {
         //
+        $this->validate($request,[
+            // 'title' => 'required',
+            'recipient_email' => 'required',
+            'file' => 'required'
+            
+           
+        ]);
+
+        $document = new Document;
+        if($request->hasFile('file')){
+            $file = $request['file'];
+            $filename = $file->getClientOriginalName();
+            // dd($filename)
+            $file->storeAs('public/documents',$filename);
+            $document->file = $filename;
+                 
+        }
+        $document->name = $filename;
+        $document->recipient_email = $request->input('recipient_email');
+        $document->transaction_id = mt_rand();
+        $document->user_id = Auth::user()->id;
+        // dd($request);
+        $document->save();
+        return redirect('/index')->with('success', 'Document Sent and Saved Successfully!');
+        
+
     }
 
     /**
@@ -51,6 +81,8 @@ class DocumentController extends Controller
     public function show($id)
     {
         //
+        $file = Document::find($id);
+        return view('user.show')->with('file', $file);
     }
 
     /**
@@ -85,5 +117,14 @@ class DocumentController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function filedownload($id){
+        $document = Document::find($id);
+        $file_name = $document->file;
+        $pathToFile = public_path('storage/documents/'.$file_name);
+        // dd($pathToFile);
+        return response()->download($pathToFile);
+      
     }
 }

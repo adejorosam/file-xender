@@ -20,6 +20,7 @@ class CreateDocumentsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->nullable();
             $table->integer('transcation_id');
             $table->string('file');
+            $table->string('recipient_email');
             $table->timestamps();
         });
     }

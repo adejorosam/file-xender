@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Available files | Findworka')
 @section('content')
 <div class="container-fluid mt-5">
     <div class="card card-register">
@@ -12,7 +13,6 @@
                                         <th>
                                             Name
                                         </th>
-                                       
                                         <th>
                                             Transaction number
                                         </th>
@@ -41,7 +41,7 @@
                                             </td>
                                            
                                             <td class="text">
-                                                <a href="{{url('download')}}/{{$file->id}}" class="btn btn-warning">DOWNLOAD FILE</a>
+                                                <a href="{{url('/file')}}/{{$file->id}}" class="btn btn-warning">VIEW FILE</a>
                                             </td>
                                         </tr>
                                         @endforeach
