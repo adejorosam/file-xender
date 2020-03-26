@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Document;
+use DB;
 use Illuminate\Support\Facades\Auth;
 
 class DocumentController extends Controller
@@ -53,21 +54,24 @@ class DocumentController extends Controller
         ]);
 
         $document = new Document;
-        if($request->hasFile('file')){
-            $file = $request['file'];
-            $filename = $file->getClientOriginalName();
-            // dd($filename)
-            $file->storeAs('public/documents',$filename);
-            $document->file = $filename;
-                 
+        $files = $request['file'];
+        if(count($files) > 0){
+            foreach($files as $file) {
+                $docName = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension();
+                $filename = mt_rand().'.'.$extension;
+                $file->storeAs('public/documents',$filename);
+                // $images[] = $filename;
+                $document->file = $filename;
+            }     
         }
-        $document->name = $filename;
+        // dd($request);
+        $document->name = $docName;
         $document->recipient_email = $request->input('recipient_email');
         $document->transaction_id = mt_rand();
         $document->user_id = Auth::user()->id;
-        // dd($request);
         $document->save();
-        return redirect('/index')->with('success', 'Document Sent and Saved Successfully!');
+        return redirect('/dashboard')->with('success', 'Document Sent and Saved Successfully!');
         
 
     }
@@ -123,8 +127,21 @@ class DocumentController extends Controller
         $document = Document::find($id);
         $file_name = $document->file;
         $pathToFile = public_path('storage/documents/'.$file_name);
-        // dd($pathToFile);
         return response()->download($pathToFile);
       
+    }
+
+    public function search(Request $request){
+        $user = Auth::user()->id;
+        $transaction_id = $request->get('transaction_id');
+        $email = $request->get('e-mail');
+        $files = DB::table('documents')->where('transaction_id', 'LIKE', '%'.$transaction_id.'%')->where('recipient_email', 'LIKE','%'.$email.'%')->get();
+        if($files){
+            return view('user.dashboard')->with('files', $files);
+        }else{
+            return view('user.dashboard')->with('success', 'No file found!');
+        }
+       
+
     }
 }

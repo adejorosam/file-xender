@@ -11,8 +11,9 @@ class DashboardController extends Controller
     //
     public function dashboard(){
         $user = Auth::user();
-        $myfiles = Document::where('user_id', $user->id)->get();
-        $data = array('files' => $myfiles , 'user'=>$user );
+        // dd($user);
+        $files = Document::where('user_id', $user->id)->get();
+        $data = array('files' => $files , 'user'=>$user );
         return view('user.dashboard', $data);
     }
 

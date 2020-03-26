@@ -17,10 +17,13 @@
 
 Auth::routes();
 
-Route::get('/', 'HomeController@index')->name('home');
+// Route::get('/', 'HomeController@index')->name('home');
 Route::resource('/files', 'DocumentController');
-Route::get('dashboard', 'DashboardController@dashboard');
+Route::get('/dashboard', 'DashboardController@dashboard');
 Route::post('/profile', 'DashboardController@update');
 Route::get('/profile', 'DashboardController@profile');
 Route::get('download/{id}', 'DocumentController@filedownload');
+Route::get('/search', 'DocumentController@search');
+// Route::get('search', 'SearchController@getSearchForm');
+// Route::get('searcher', 'SearchController@search');
 
