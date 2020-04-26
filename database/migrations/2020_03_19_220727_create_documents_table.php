@@ -15,10 +15,10 @@ class CreateDocumentsTable extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('title');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->nullable();
-            $table->integer('transcation_id');
+            $table->integer('transaction_id');
             $table->string('file');
             $table->string('recipient_email');
             $table->timestamps();

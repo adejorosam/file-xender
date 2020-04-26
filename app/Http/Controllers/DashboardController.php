@@ -6,8 +6,13 @@ use Illuminate\Http\Request;
 use App\Document;
 use Illuminate\Support\Facades\Auth;
 
-class DashboardController extends Controller
-{
+class DashboardController extends Controller{
+
+    public function __construct()
+    {
+        $this->middleware(['auth']);
+    }
+
     //
     public function dashboard(){
         $user = Auth::user();

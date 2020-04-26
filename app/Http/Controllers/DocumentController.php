@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Document;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use App\Mail\SentFiles;
+use Mail;
 
 class DocumentController extends Controller
 {
@@ -16,7 +20,7 @@ class DocumentController extends Controller
      */
      public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth','checkRole'])->except(['create','store','edit','update','filedowload','search']);
     }
 
     public function index()
@@ -49,28 +53,30 @@ class DocumentController extends Controller
             // 'title' => 'required',
             'recipient_email' => 'required',
             'file' => 'required'
-            
-           
         ]);
 
         $document = new Document;
+        $document->user_id = Auth::user()->id;
+        $document->transaction_id = mt_rand();
+        $id = $document->transaction_id;
+        $document->recipient_email = $request['recipient_email'];
         $files = $request['file'];
         if(count($files) > 0){
             foreach($files as $file) {
                 $docName = $file->getClientOriginalName();
                 $extension = $file->getClientOriginalExtension();
                 $filename = mt_rand().'.'.$extension;
-                $file->storeAs('public/documents',$filename);
-                // $images[] = $filename;
+                $file->storeAs('public/documents'.$id, $filename);
                 $document->file = $filename;
             }     
         }
-        // dd($request);
-        $document->name = $docName;
-        $document->recipient_email = $request->input('recipient_email');
-        $document->transaction_id = mt_rand();
-        $document->user_id = Auth::user()->id;
+        
         $document->save();
+        $attachedFiles = public_path().'\storage\documents'.$id;
+        $files = File::allFiles($attachedFiles);
+    
+        Mail::to($request['recipient_email'])->send(new SentFiles($files));
+        
         return redirect('/dashboard')->with('success', 'Document Sent and Saved Successfully!');
         
 
@@ -141,7 +147,5 @@ class DocumentController extends Controller
         }else{
             return view('user.dashboard')->with('success', 'No file found!');
         }
-       
-
     }
 }
