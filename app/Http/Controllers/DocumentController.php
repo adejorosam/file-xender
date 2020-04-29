@@ -64,6 +64,7 @@ class DocumentController extends Controller
         if(count($files) > 0){
             foreach($files as $file) {
                 $docName = $file->getClientOriginalName();
+                $document->title = $docName;
                 $extension = $file->getClientOriginalExtension();
                 $filename = mt_rand().'.'.$extension;
                 $file->storeAs('public/documents'.$id, $filename);
@@ -71,11 +72,13 @@ class DocumentController extends Controller
             }     
         }
         
-        $document->save();
+        // $document->save();
+        // dd($document);
         $attachedFiles = public_path().'\storage\documents'.$id;
         $files = File::allFiles($attachedFiles);
+        $sender = Auth::user()->email;
     
-        Mail::to($request['recipient_email'])->send(new SentFiles($files));
+        Mail::to($request['recipient_email'])->send(new SentFiles($files, $sender));
         
         return redirect('/dashboard')->with('success', 'Document Sent and Saved Successfully!');
         

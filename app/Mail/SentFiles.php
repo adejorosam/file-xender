@@ -12,16 +12,18 @@ class SentFiles extends Mailable
     use Queueable, SerializesModels;
 
     public $attachment;
+    public $sender;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($attachment)
+    public function __construct($attachment, $sender)
     {
         //
         $this->attachment = $attachment;
+        $this->sender = $sender;
     }
 
     /**
@@ -34,7 +36,7 @@ class SentFiles extends Mailable
 
 
         $email = $this->view('emails.attached')
-                ->from('sender@domain.com');
+                ->from($this->sender);
                 foreach ($this->attachment as $item) {
                     $email->attach($item);
                 }

@@ -88,7 +88,7 @@
                                         @foreach($files as $file)
                                         <tr>
                                             <td>
-                                                {{$file->name}}
+                                                {{$file->recipient_email}}
                                             </td>
                                             <td>
                                                 {{$file->transaction_id}} 
