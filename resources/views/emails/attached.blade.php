@@ -6,6 +6,6 @@
         <title>Attached File</title>
     </head>
     <body>
-        <p>{{$content}}</p>
+        <p>{!!$content!!}</p>
     </body>
 </html>

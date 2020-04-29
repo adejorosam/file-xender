@@ -8,8 +8,8 @@
     {{Form::text('recipient_email','', ['class' =>'form-control', 'placeholder' => "Recipient's E-mail"])}}
 </div>
 <div class="form-group">
-    {{Form::label("Message(optional)",  "Message")}}
-    {{Form::textarea('message','', ['class' =>'form-control', 'placeholder' => "Put your message here"])}}
+    <label> Content </label>
+    <textarea style="height:250px;" class="form-control" name="message"></textarea>
 </div>
 <div class="form-group">
     <label for="">File Select</label>
@@ -23,4 +23,11 @@
 {!! Form::close() !!}
 </div>
 @endsection
-
+<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+<script>
+    tinymce.init({
+        selector:'textarea',
+        width: 900,
+        height: 300
+    });
+</script>
