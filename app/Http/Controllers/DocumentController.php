@@ -56,6 +56,7 @@ class DocumentController extends Controller
         ]);
 
         $document = new Document;
+        $document->message = $request['message'];
         $document->user_id = Auth::user()->id;
         $document->transaction_id = mt_rand();
         $id = $document->transaction_id;
@@ -77,8 +78,9 @@ class DocumentController extends Controller
         $attachedFiles = public_path().'\storage\documents'.$id;
         $files = File::allFiles($attachedFiles);
         $sender = Auth::user()->email;
+        $message = $request['message'];
     
-        Mail::to($request['recipient_email'])->send(new SentFiles($files, $sender));
+        Mail::to($request['recipient_email'])->send(new SentFiles($files, $sender, $message));
         
         return redirect('/dashboard')->with('success', 'Document Sent and Saved Successfully!');
         

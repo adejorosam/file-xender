@@ -19,6 +19,7 @@ class CreateDocumentsTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->nullable();
             $table->integer('transaction_id');
+            $table->text('message')->nullable();
             $table->string('file');
             $table->string('recipient_email');
             $table->timestamps();

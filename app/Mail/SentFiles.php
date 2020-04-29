@@ -13,17 +13,19 @@ class SentFiles extends Mailable
 
     public $attachment;
     public $sender;
+    public $content;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($attachment, $sender)
+    public function __construct($attachment, $sender, $content)
     {
         //
         $this->attachment = $attachment;
         $this->sender = $sender;
+        $this->content = $content;
     }
 
     /**
