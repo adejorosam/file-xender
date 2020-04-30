@@ -1,6 +1,6 @@
 ## About FileXender
 
-FileXender is a file sending application where user can send files to people via their email address.
+FileXender is a file sending web application where user can send files to people via their email address.
 
 
 ### Installation
