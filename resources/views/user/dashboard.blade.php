@@ -88,7 +88,7 @@
                                         @foreach($files as $file)
                                         <tr>
                                             <td>
-                                                {{$file->recipient_email}}
+                                                {{$file->title}}
                                             </td>
                                             <td>
                                                 {{$file->transaction_id}} 
@@ -100,9 +100,7 @@
                                                 {{ \Carbon\Carbon::parse($file->created_at)->format('d/m/Y')}}
                                             </td>
                                            
-                                            <td class="text">
-                                                <a href="{{url('download')}}/{{$file->id}}" class="btn btn-warning">DOWNLOAD FILE</a>
-                                            </td>
+
                                         </tr>
                                         @endforeach
                                     </tbody>

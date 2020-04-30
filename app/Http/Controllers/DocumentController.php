@@ -55,25 +55,28 @@ class DocumentController extends Controller
             'file' => 'required'
         ]);
 
-        $document = new Document;
-        $document->message = $request['message'];
-        $document->user_id = Auth::user()->id;
-        $document->transaction_id = mt_rand();
-        $id = $document->transaction_id;
-        $document->recipient_email = $request['recipient_email'];
         $files = $request['file'];
-        if(count($files) > 0){
+        $id = mt_rand();
+        if($files){
             foreach($files as $file) {
                 $docName = $file->getClientOriginalName();
-                $document->title = $docName;
+                $originalName = pathinfo($docName,PATHINFO_FILENAME);
                 $extension = $file->getClientOriginalExtension();
                 $filename = mt_rand().'.'.$extension;
                 $file->storeAs('public/documents'.$id, $filename);
-                $document->file = $filename;
+                $data[] = $originalName;
             }     
         }
+        $name = implode(',',$data);
+        $document = new Document();
+        $document->file = $name;
+        $document->title = $name;
+        $document->message = $request['message'];
+        $document->user_id = Auth::user()->id;
+        $document->transaction_id = $id;
+        $document->recipient_email = $request['recipient_email'];
         
-        // $document->save();
+        $document->save();
         // dd($document);
         $attachedFiles = public_path().'\storage\documents'.$id;
         $files = File::allFiles($attachedFiles);
@@ -134,13 +137,6 @@ class DocumentController extends Controller
         //
     }
 
-    public function filedownload($id){
-        $document = Document::find($id);
-        $file_name = $document->file;
-        $pathToFile = public_path('storage/documents/'.$file_name);
-        return response()->download($pathToFile);
-      
-    }
 
     public function search(Request $request){
         $user = Auth::user()->id;
