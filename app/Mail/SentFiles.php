@@ -40,8 +40,11 @@ class SentFiles extends Mailable
         $email = $this->view('emails.attached')
                 ->from($this->sender);
                 foreach ($this->attachment as $item) {
+                    // dd($item);
                     $email->attach($item);
+                    // dd($item)
                 }
+                // dd($item->getRealPath());
         return $email;
     }
 }

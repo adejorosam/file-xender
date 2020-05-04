@@ -20,7 +20,7 @@ class DocumentController extends Controller
      */
      public function __construct()
     {
-        $this->middleware(['auth','checkRole'])->except(['create','store','edit','update','filedowload','search']);
+        $this->middleware(['auth']);
     }
 
     public function index()
@@ -50,12 +50,12 @@ class DocumentController extends Controller
     {
         //
         $this->validate($request,[
-            // 'title' => 'required',
             'recipient_email' => 'required',
             'file' => 'required'
         ]);
 
         $files = $request['file'];
+        // dd($files);
         $id = mt_rand();
         if($files){
             foreach($files as $file) {
@@ -63,11 +63,13 @@ class DocumentController extends Controller
                 $originalName = pathinfo($docName,PATHINFO_FILENAME);
                 $extension = $file->getClientOriginalExtension();
                 $filename = mt_rand().'.'.$extension;
+                $filePath = 'documents/' . $id .'/'.$filename;
                 $file->storeAs('public/documents'.$id, $filename);
+                // Storage::disk('s3')->put($filePath, file_get_contents($file), 'public');
                 $data[] = $originalName;
             }     
         }
-        $name = implode(',',$data);
+        $name = implode(',' , $data);
         $document = new Document();
         $document->file = $name;
         $document->title = $name;
@@ -75,18 +77,17 @@ class DocumentController extends Controller
         $document->user_id = Auth::user()->id;
         $document->transaction_id = $id;
         $document->recipient_email = $request['recipient_email'];
-        
         $document->save();
         // dd($document);
         $attachedFiles = public_path().'\storage\documents'.$id;
         $files = File::allFiles($attachedFiles);
         $sender = Auth::user()->email;
         $message = $request['message'];
-    
+
+        
         Mail::to($request['recipient_email'])->send(new SentFiles($files, $sender, $message));
         
         return redirect('/dashboard')->with('success', 'Document Sent and Saved Successfully!');
-        
 
     }
 
